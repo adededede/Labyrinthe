@@ -1,2 +1,5 @@
 modélisation labyrinthe:
 	https://fr.wikipedia.org/wiki/Mod%C3%A9lisation_math%C3%A9matique_d%27un_labyrinthe
+	=> Le nombre de murs fermés dans un labyrinthe parfait est donc : 2 m n − m − n − ( m n − 1 ) 
+	   AVEC m : colonnes et n : lignes
+ 
