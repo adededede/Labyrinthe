@@ -1,0 +1,2 @@
+modélisation labyrinthe:
+	https://fr.wikipedia.org/wiki/Mod%C3%A9lisation_math%C3%A9matique_d%27un_labyrinthe
