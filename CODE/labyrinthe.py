@@ -1,5 +1,5 @@
 from asyncio.windows_events import NULL
-
+import random
 
 class Case:
 
@@ -8,8 +8,10 @@ class Case:
     mur_bas = False
     mur_gauche = False
     mur_droite = False
-    #index
+    #index de la case
     index = 0
+    #index de la modélisation
+    index_modelisation = 0
 
     #constructeur
     def __init__(self,haut,bas,gauche,droite,index):
@@ -21,6 +23,7 @@ class Case:
         self.mur_gauche=gauche
         self.mur_droite=droite
         self.index = index
+        self.index_modelisation = self.index
    
 
 class Labyrinthe:
@@ -34,19 +37,19 @@ class Labyrinthe:
     def __init__(self,largeur,hauteur):
         self.largeur=largeur
         self.hauteur=hauteur
-        self.remplissage_aleatoire()
+        index = 0
+        for c in range(self.largeur*self.hauteur) :
+            #idée de basee remplir juste le contour
+            #causee des problèmes lors de la modélisation des chemins dans le labyrinthe
+            #self.cases.append(Case(False,False,False,False,index))
+            self.cases.append(Case(True,True,True,True,index))
+            index+=1
         # techniquement la création des bordures fait
         # aussi les coins du coup pas vraiment utile
         # self.creation_coins()
-        self.creation_bordures()
 
-
-    #methode de la classe
-    def remplissage_aleatoire(self):
-        index = 0
-        for c in range(self.largeur*self.hauteur) :
-            self.cases.append(Case(False,False,False,False,index))
-            index+=1
+        # Du coup les bordures sont faites lorsque l'on rempli & crée la grille du labyrinthe
+        # self.creation_bordures()
 
     def creation_coins(self):
         #coin en haut à gauche
@@ -80,7 +83,7 @@ class Labyrinthe:
     
     def affichage(self):
         for c in self.cases : 
-            print(f'index : {c.index}')
+            print(f'index : {c.index}\tmodelisation : {c.index_modelisation}')
             if c.index % self.largeur == (self.largeur-1) :
                 print(f'{c.mur_haut} {c.mur_bas} {c.mur_gauche} {c.mur_droite} \n')
             else :
@@ -99,7 +102,7 @@ class Labyrinthe:
             bas = self.cases[index]
             haut = NULL
 
-        #si l'index correspond à une case de la dernière ligne
+        #si l'index correspond à une case de la colonne toute à droite  
         elif(index % self.largeur == (self.largeur-1)) :
             #on regarde la case à sa gauche
             if index != (self.largeur*self.hauteur)-self.largeur :
@@ -110,7 +113,7 @@ class Labyrinthe:
             bas = NULL
             haut = self.cases[index]
 
-        #si l'index correspond à une case de la colonne toute à gauche          
+        #si l'index correspond à une case de la dernière ligne          
         elif(index >= (self.largeur*self.hauteur)-self.largeur and index <= (self.largeur*self.hauteur)-1):
             gauche = NULL
             #on regarde la case au dessus
@@ -120,7 +123,7 @@ class Labyrinthe:
             #on regarde la case à sa droite
             droit = self.cases[index + 1].mur_gauche                
             
-        #si l'index correspond à une case de la colonne toute à droite
+        #si l'index correspond à une case de la colonne toute à gauche
         elif(index % self.largeur == 0) :
             droit = NULL
             #on regarde la case au dessus
@@ -130,10 +133,96 @@ class Labyrinthe:
             #on regarde la case à sa gauche
             gauche = self.cases[index - 1].mur_droite              
                         
+
+    def remplissage(self):
+        iteration = 0
+        while (iteration < (self.largeur*self.hauteur)-1):
+            case_aleatoire = random.randint(0, (self.largeur*self.hauteur)-1)
+            mur_aleatoire = random.randint(0,3)
+            #mur haut
+            if mur_aleatoire == 0:
+                #SI la case n'est pas sur la ligne une
+                if self.cases[case_aleatoire].index > self.largeur-1 :
+                    #si la case au dessus de celle tiré n'a pas le même index de modélisation
+                    if self.cases[case_aleatoire].index_modelisation != self.cases[case_aleatoire-self.largeur].index_modelisation :
+                        iteration += 1
+                        #on enleve le mur en haut
+                        #de la case pioché
+                        self.cases[case_aleatoire].mur_haut = False
+                        #et de la case au dessus
+                        self.cases[case_aleatoire-self.largeur].mur_bas = False
+                        #on donne le même index de modelisation aux deux cases
+                        self.cases[case_aleatoire-self.largeur].index_modelisation = self.cases[case_aleatoire].index
+                        #ainsi qu'a toutes les cases qu'elles a deja "infecté" 
+                        for c in self.cases:
+                            if c.index_modelisation == self.cases[case_aleatoire-self.largeur].index :
+                                c.index_modelisation = self.cases[case_aleatoire].index
+
+            #mur bas
+            elif mur_aleatoire == 1:
+                #SI la case n'est pas sur la dernière ligne
+                if self.cases[case_aleatoire].index < (self.largeur*self.hauteur)-self.largeur :
+                    #si la case au dessous de celle tiré n'a pas le même index de modélisation
+                    if self.cases[case_aleatoire].index_modelisation != self.cases[case_aleatoire+self.largeur].index_modelisation :
+                        iteration += 1
+                        #on enleve le mur en bas
+                        #de la case pioché
+                        self.cases[case_aleatoire].mur_bas = False
+                        #et de la case au dessous
+                        self.cases[case_aleatoire+self.largeur].mur_haut = False
+                        #on donne le même index de modelisation aux deux cases
+                        self.cases[case_aleatoire+self.largeur].index_modelisation = self.cases[case_aleatoire].index
+                        #ainsi qu'a toutes les cases qu'elles a deja "infecté" 
+                        for c in self.cases:
+                            if c.index_modelisation == self.cases[case_aleatoire+self.largeur].index :
+                                c.index_modelisation = self.cases[case_aleatoire].index
+
+            #mur droit
+            elif mur_aleatoire == 2:
+                #SI la case n'est pas sur la ligne la plus à droite
+                if self.cases[case_aleatoire].index % self.largeur != (self.largeur-1):
+                    #si la case à droite de celle tiré n'a pas le même index de modélisation
+                    if self.cases[case_aleatoire].index_modelisation != self.cases[case_aleatoire+1].index_modelisation :
+                        iteration += 1
+                        #on enlève le mur à droite
+                        #de la case pioché
+                        self.cases[case_aleatoire].mur_droite = False
+                        #et de la case à sa droite
+                        self.cases[case_aleatoire+1].mur_gauche = False
+                        #on donne le même index de modelisation aux deux cases
+                        self.cases[case_aleatoire+1].index_modelisation = self.cases[case_aleatoire].index
+                        #ainsi qu'a toutes les cases qu'elles a deja "infecté" 
+                        for c in self.cases:
+                            if c.index_modelisation == self.cases[case_aleatoire+1].index :
+                                c.index_modelisation = self.cases[case_aleatoire].index
+
+            #mur gauche
+            elif mur_aleatoire == 3:
+                #SI la case n'est pas sur la ligne la plus à gauche
+                if self.cases[case_aleatoire].index % self.largeur != 0:
+                    #si la case à gauche de celle tiré n'a pas le même index de modélisation
+                    if self.cases[case_aleatoire].index_modelisation != self.cases[case_aleatoire-1].index_modelisation :
+                        iteration += 1
+                        #on enlève le mur à gauche
+                        #de la case pioché
+                        self.cases[case_aleatoire].mur_gauche = False
+                        #et de la case à sa gauche
+                        self.cases[case_aleatoire-1].mur_droite = False
+                        #on donne le même index de modelisation aux deux cases
+                        self.cases[case_aleatoire-1].index_modelisation = self.cases[case_aleatoire].index
+                        #ainsi qu'a toutes les cases qu'elles a deja "infecté" 
+                        for c in self.cases:
+                            if c.index_modelisation == self.cases[case_aleatoire-1].index :
+                                c.index_modelisation = self.cases[case_aleatoire].index
+        
+
+    
                    
 
 #test du code
 labyrinthe_test = Labyrinthe(4,3)
+labyrinthe_test.affichage()
+labyrinthe_test.remplissage()
 labyrinthe_test.affichage()
             
             
