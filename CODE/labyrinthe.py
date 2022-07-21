@@ -136,7 +136,7 @@ class Labyrinthe:
 
     def remplissage(self):
         iteration = 0
-        while (iteration < (self.largeur*self.hauteur)-1):
+        while (iteration < self.largeur*self.hauteur):
             case_aleatoire = random.randint(0, (self.largeur*self.hauteur)-1)
             mur_aleatoire = random.randint(0,3)
             #mur haut
@@ -152,11 +152,11 @@ class Labyrinthe:
                         #et de la case au dessus
                         self.cases[case_aleatoire-self.largeur].mur_bas = False
                         #on donne le même index de modelisation aux deux cases
-                        self.cases[case_aleatoire-self.largeur].index_modelisation = self.cases[case_aleatoire].index
+                        self.cases[case_aleatoire-self.largeur].index_modelisation = self.cases[case_aleatoire].index_modelisation
                         #ainsi qu'a toutes les cases qu'elles a deja "infecté" 
                         for c in self.cases:
                             if c.index_modelisation == self.cases[case_aleatoire-self.largeur].index :
-                                c.index_modelisation = self.cases[case_aleatoire].index
+                                c.index_modelisation = self.cases[case_aleatoire-self.largeur].index_modelisation
 
             #mur bas
             elif mur_aleatoire == 1:
@@ -171,11 +171,11 @@ class Labyrinthe:
                         #et de la case au dessous
                         self.cases[case_aleatoire+self.largeur].mur_haut = False
                         #on donne le même index de modelisation aux deux cases
-                        self.cases[case_aleatoire+self.largeur].index_modelisation = self.cases[case_aleatoire].index
+                        self.cases[case_aleatoire+self.largeur].index_modelisation = self.cases[case_aleatoire].index_modelisation
                         #ainsi qu'a toutes les cases qu'elles a deja "infecté" 
                         for c in self.cases:
                             if c.index_modelisation == self.cases[case_aleatoire+self.largeur].index :
-                                c.index_modelisation = self.cases[case_aleatoire].index
+                                c.index_modelisation = self.cases[case_aleatoire+self.largeur].index_modelisation
 
             #mur droit
             elif mur_aleatoire == 2:
@@ -190,11 +190,11 @@ class Labyrinthe:
                         #et de la case à sa droite
                         self.cases[case_aleatoire+1].mur_gauche = False
                         #on donne le même index de modelisation aux deux cases
-                        self.cases[case_aleatoire+1].index_modelisation = self.cases[case_aleatoire].index
+                        self.cases[case_aleatoire+1].index_modelisation = self.cases[case_aleatoire].index_modelisation
                         #ainsi qu'a toutes les cases qu'elles a deja "infecté" 
                         for c in self.cases:
                             if c.index_modelisation == self.cases[case_aleatoire+1].index :
-                                c.index_modelisation = self.cases[case_aleatoire].index
+                                c.index_modelisation = self.cases[case_aleatoire+1].index_modelisation
 
             #mur gauche
             elif mur_aleatoire == 3:
@@ -209,11 +209,11 @@ class Labyrinthe:
                         #et de la case à sa gauche
                         self.cases[case_aleatoire-1].mur_droite = False
                         #on donne le même index de modelisation aux deux cases
-                        self.cases[case_aleatoire-1].index_modelisation = self.cases[case_aleatoire].index
+                        self.cases[case_aleatoire-1].index_modelisation = self.cases[case_aleatoire].index_modelisation
                         #ainsi qu'a toutes les cases qu'elles a deja "infecté" 
                         for c in self.cases:
                             if c.index_modelisation == self.cases[case_aleatoire-1].index :
-                                c.index_modelisation = self.cases[case_aleatoire].index
+                                c.index_modelisation = self.cases[case_aleatoire-1].index_modelisation
         
 
     
