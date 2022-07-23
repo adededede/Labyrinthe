@@ -30,6 +30,7 @@ class Labyrinthe:
 
     #attributs de la classe
     #on pourrait par la suite imaginer des labyrinthe de forme ronde, triangulaire...
+    #ainsi que des labyrinthe impossible (insolvable) ainsi que des labyrinthe imparfaits
     cases = []
 
 
@@ -65,6 +66,7 @@ class Labyrinthe:
         self.cases[(self.largeur*self.hauteur)-1].mur_bas =True
         self.cases[(self.largeur*self.hauteur)-1].mur_droite =True
 
+    #créer les contours du labybrinthe
     def creation_bordures(self):
         #parcours de notre liste de cases
         for c in self.cases :
@@ -81,6 +83,7 @@ class Labyrinthe:
             if(c.index % self.largeur == (self.largeur-1)) :
                 c.mur_droite = True
     
+    #permet d'afficher de manière brut le labyrinthe
     def affichage(self):
         for c in self.cases : 
             print(f'index : {c.index}\tmodelisation : {c.index_modelisation}')
@@ -133,7 +136,7 @@ class Labyrinthe:
             #on regarde la case à sa gauche
             gauche = self.cases[index - 1].mur_droite              
                         
-
+    #modélise l'interieur du labyrinthe de manière aléatoire
     def remplissage(self):
         iteration = 0
         while (iteration < self.largeur*self.hauteur):
@@ -145,7 +148,6 @@ class Labyrinthe:
                 if self.cases[case_aleatoire].index > self.largeur-1 :
                     #si la case au dessus de celle tiré n'a pas le même index de modélisation
                     if self.cases[case_aleatoire].index_modelisation != self.cases[case_aleatoire-self.largeur].index_modelisation :
-                        iteration += 1
                         #on enleve le mur en haut
                         #de la case pioché
                         self.cases[case_aleatoire].mur_haut = False
@@ -157,6 +159,7 @@ class Labyrinthe:
                         for c in self.cases:
                             if c.index_modelisation == self.cases[case_aleatoire-self.largeur].index :
                                 c.index_modelisation = self.cases[case_aleatoire-self.largeur].index_modelisation
+                        iteration += 1
 
             #mur bas
             elif mur_aleatoire == 1:
@@ -164,7 +167,6 @@ class Labyrinthe:
                 if self.cases[case_aleatoire].index < (self.largeur*self.hauteur)-self.largeur :
                     #si la case au dessous de celle tiré n'a pas le même index de modélisation
                     if self.cases[case_aleatoire].index_modelisation != self.cases[case_aleatoire+self.largeur].index_modelisation :
-                        iteration += 1
                         #on enleve le mur en bas
                         #de la case pioché
                         self.cases[case_aleatoire].mur_bas = False
@@ -176,6 +178,7 @@ class Labyrinthe:
                         for c in self.cases:
                             if c.index_modelisation == self.cases[case_aleatoire+self.largeur].index :
                                 c.index_modelisation = self.cases[case_aleatoire+self.largeur].index_modelisation
+                        iteration += 1
 
             #mur droit
             elif mur_aleatoire == 2:
@@ -183,7 +186,6 @@ class Labyrinthe:
                 if self.cases[case_aleatoire].index % self.largeur != (self.largeur-1):
                     #si la case à droite de celle tiré n'a pas le même index de modélisation
                     if self.cases[case_aleatoire].index_modelisation != self.cases[case_aleatoire+1].index_modelisation :
-                        iteration += 1
                         #on enlève le mur à droite
                         #de la case pioché
                         self.cases[case_aleatoire].mur_droite = False
@@ -195,6 +197,7 @@ class Labyrinthe:
                         for c in self.cases:
                             if c.index_modelisation == self.cases[case_aleatoire+1].index :
                                 c.index_modelisation = self.cases[case_aleatoire+1].index_modelisation
+                        iteration += 1
 
             #mur gauche
             elif mur_aleatoire == 3:
@@ -202,7 +205,6 @@ class Labyrinthe:
                 if self.cases[case_aleatoire].index % self.largeur != 0:
                     #si la case à gauche de celle tiré n'a pas le même index de modélisation
                     if self.cases[case_aleatoire].index_modelisation != self.cases[case_aleatoire-1].index_modelisation :
-                        iteration += 1
                         #on enlève le mur à gauche
                         #de la case pioché
                         self.cases[case_aleatoire].mur_gauche = False
@@ -214,7 +216,29 @@ class Labyrinthe:
                         for c in self.cases:
                             if c.index_modelisation == self.cases[case_aleatoire-1].index :
                                 c.index_modelisation = self.cases[case_aleatoire-1].index_modelisation
+                        iteration += 1
         
+    #creation des portes d'entrée et de sortie du labyrinthe
+    def creation_portes(self):
+        index_porte1 = -1
+        index_porte2 = -1
+        while not ((index_porte1>=0 and index_porte1< self.largeur) or (index_porte1>= self.largeur*(self.hauteur-1) and index_porte1<self.largeur*self.hauteur) or (index_porte1%self.largeur==0) or (index_porte1%self.largeur==self.largeur-1)) :
+            index_porte1 = random.randint(0,(self.largeur*self.hauteur)-1)
+            
+        index_porte2 = index_porte1
+        while index_porte1 == index_porte2 :
+            while not ((index_porte2>=0 and index_porte2< self.largeur) or (index_porte2>= self.largeur*(self.hauteur-1) and index_porte2<self.largeur*self.hauteur) or (index_porte2%self.largeur==0) or (index_porte2%self.largeur==self.largeur-1)) :
+                index_porte2 = random.randint(0,(self.largeur*self.hauteur)-1)
+        
+        #switch self.cases[index_porte1].etat :
+        #    case COIN_0_0 :
+        #    case COIN_0_D :
+        #    case COIN_G_0 :
+        #    case COIN_D_D :
+        #    case L_0 :
+        #    case L_G :
+        #    case L_D :
+        #    case L_Fin :
 
     
                    
